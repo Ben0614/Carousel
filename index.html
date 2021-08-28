@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carousel</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        .wrap {
+            position: relative;
+            max-width: 1500px;
+            height: 850px;
+            overflow: hidden;
+            margin: 50px auto;
+        }
+
+        ul.train {
+            display: flex;
+            width: 7500px;
+            padding: 0;
+            transition: .7s;
+        }
+
+        li {
+            width: 60%;
+        }
+
+        li.car {
+            list-style: none;
+        }
+
+        li.car img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .slider-dots {
+            display: flex;
+            position: absolute;
+            list-style: none;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%)
+        }
+
+        .slider-dots li {
+            width: 40px;
+            height: 10px;
+            border: 2px solid #fff;
+            margin: 0 4px;
+            cursor: pointer;
+        }
+
+        /* 改變li白色背景 */
+        .active {
+            background-color: #fff
+        }
+
+        .prev-arrow {
+            position: absolute;
+            width: 100px;
+            height: 40px;
+            top: 50%;
+            left: 20px;
+            cursor: pointer;
+            color: #fff;
+            text-align: center;
+            font-size: 30px;
+        }
+
+        .prev-arrow::after,
+        .next-arrow::after {
+            content: '';
+            position: absolute;
+            top: 70%;
+            left: 0;
+            width: 100px;
+            height: 2px;
+            background-color: #000;
+        }
+
+        .prev-arrow::before {
+            content: '';
+            position: absolute;
+            top: 46%;
+            left: -5px;
+            width: 30px;
+            height: 2px;
+            transform: rotate(-45deg);
+            background-color: #000;
+        }
+
+        .next-arrow {
+            position: absolute;
+            width: 100px;
+            height: 40px;
+            top: 50%;
+            right: 10px;
+            cursor: pointer;
+            color: #fff;
+            text-align: center;
+            font-size: 30px;
+        }
+
+        .next-arrow::after {
+            right: 0;
+        }
+
+        .next-arrow::before {
+            content: '';
+            position: absolute;
+            top: 46%;
+            right: -5px;
+            width: 30px;
+            height: 2px;
+            transform: rotate(45deg);
+            background-color: #000;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrap">
+        <ul class="train">
+            <li class="car">
+                <img src="./images/c06d3f11.jpg" alt="">
+            </li>
+            <li class="car">
+                <img src="./images/N4627.jpg" alt="">
+            </li>
+            <li class="car">
+                <img src="./images/20201118A132-scaled.jpg" alt="">
+            </li>
+            <li class="car">
+                <img src="./images/1d0640ccda0eebe6a9c42501817e52db12a042c3.jpg" alt="">
+            </li>
+            <li class="car">
+                <img src="./images/24th-main.jpg" alt="">
+            </li>
+        </ul>
+        <ul class="slider-dots">
+
+        </ul>
+        <div class="prev-arrow"></div>
+        <div class="next-arrow"></div>
+    </div>
+
+
+
+
+    <script src="./jquery-3.6.0/jquery-3.6.0.js"></script>
+
+    <script>
+        // 動態生成點
+        // 迴圈所有圖
+        $('.train li').each(function () {
+            // 生成li
+            let li = '<li></li>';
+            // 添加到slider-dots
+            $('.slider-dots').append(li);
+        });
+
+        // 為第一個li添加白點
+        $('.slider-dots li').eq(0).addClass('active');
+
+        // 控制自動播放
+        let page = 0;
+        // 自動播放函數
+        let myInterval;
+        // 控制上下按鈕
+        let num = 0;
+        // 獲取index
+        let index;
+
+        // 自動播放函數
+        function startInterval() {
+            myInterval = setInterval(function () {
+                page++
+                // 自動播放時，num的數字要改成page
+                num = page;
+                if (page > $('.train li').length - 1) {
+                    page = 0;
+                }
+
+                distance = page * -1500;
+
+                $('.train').css('transform', `translate(${distance}px)`)
+
+                $('.slider-dots li').eq(page).addClass('active').siblings().removeClass('active');
+
+
+            }, 2000)
+        }
+
+        // 載入頁面就自動播放
+        startInterval();
+
+        // 滑鼠碰到上下按鈕就清除自動播放，移開就啟動
+        $('.prev-arrow,.next-arrow').mouseenter(function () {
+                clearInterval(myInterval);
+            })
+            .mouseleave(function () {
+                startInterval(myInterval)
+            })
+
+        // 下按鈕
+        $('.next-arrow').click(function () {
+            num++;
+            // 如果點擊，page的數字要改成num
+            page = num;
+            if (num > $('.train li').length - 1) {
+                num = 0
+            }
+
+            distance = num * -1500;
+            $('.train').css('transform', `translate(${distance}px)`)
+            $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
+        })
+
+        // 上按鈕
+        $('.prev-arrow').click(function () {
+            num--;
+            // 如果點擊，page的數字要改成num
+            page = num;
+            if (num < 0) {
+                num = $('.train li').length - 1;
+            }
+
+            distance = num * -1500;
+            $('.train').css('transform', `translate(${distance}px)`)
+            $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
+        })
+
+
+        // 點
+        $('.slider-dots li').hover(function () {
+            // 停止自動播放
+            clearInterval(myInterval);
+            // 找到當前點的index
+            index = $(this).index();
+            // page數字改成index的
+            page = index;
+            // num數字改成index的
+            num = index;
+
+            let distance = index * -1500;
+
+            $('.train').css('transform', `translate(${distance}px)`)
+            $(this).addClass('active').siblings().removeClass('active');
+        }, function () { // 滑鼠移開重啟自動播放
+            startInterval();
+        })
+    </script>
+
+</body>
+
+</html>
