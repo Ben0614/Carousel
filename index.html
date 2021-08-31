@@ -185,6 +185,8 @@
         let num = 0;
         // 獲取index
         let index;
+        // 控制上下按鍵播放的速度 避免連續快速按時圖片跳太快
+        let flag = true;
 
         // 自動播放函數
         function startInterval() {
@@ -219,16 +221,26 @@
                 startInterval();
             },
             'click': function () {
-                num--;
-                // num < 0 讓它到最後一張
-                if (num < 0) {
-                    num = $('.train li').length - 1;
+                // flag是true才執行
+                if (flag) {
+                    num--;
+                    // num < 0 讓它到最後一張
+                    if (num < 0) {
+                        num = $('.train li').length - 1;
+                    }
+                    page = num;
+
+                    $('.train').css('transform', `translate(${num * -1500}px)`)
+
+                    $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
+
+                    // 執行完後改為false
+                    flag = false;
+                    // 計時器 0.5s後再重新開啟為true
+                    setTimeout(function () {
+                        flag = true
+                    }, 500)
                 }
-                page = num;
-
-                $('.train').css('transform', `translate(${num * -1500}px)`)
-
-                $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
             }
         })
 
@@ -242,16 +254,27 @@
                 startInterval();
             },
             'click': function () {
-                num++;
-                // num > 圖片最大數量 讓它回到第一張
-                if (num > $('.train li').length - 1) {
-                    num = 0;
+                // flag是true才執行
+                if (flag) {
+                    num++;
+                    // num > 圖片最大數量 讓它回到第一張
+                    if (num > $('.train li').length - 1) {
+                        num = 0;
+                    }
+                    page = num;
+
+                    $('.train').css('transform', `translate(${num * -1500}px)`)
+
+                    $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
+
+                    // 執行完後改為false
+                    flag = false;
+                    // 計時器 0.5s後再重新開啟為true
+                    setTimeout(function () {
+                        flag = true
+                    }, 500)
                 }
-                page = num;
 
-                $('.train').css('transform', `translate(${num * -1500}px)`)
-
-                $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
             }
         })
 
