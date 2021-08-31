@@ -23,18 +23,15 @@
 
         ul.train {
             display: flex;
-            width: 7500px;
+            /* width: 7500px; */
             padding: 0;
             transition: .7s;
         }
 
-        li {
-            width: 1500px;
-            height: 850px;
-        }
-
         li.car {
             list-style: none;
+            width: 1500px;
+            height: 850px;
         }
 
         li.car img {
@@ -161,6 +158,13 @@
     <script src="./jquery-3.6.0/jquery-3.6.0.js"></script>
 
     <script>
+        // 動態設定train的width
+        // 用train的li數量和寬度設定
+        // 如果之後圖片增加或減少都會自動調整
+        let trainWidth = $('.train li').length * 1500;
+
+        $('.train').css('width', `${trainWidth}px`)
+
         // 動態生成點
         // 迴圈所有圖
         $('.train li').each(function () {
@@ -205,40 +209,50 @@
         // 載入頁面就自動播放
         startInterval();
 
-        // 滑鼠碰到上下按鈕就清除自動播放，移開就啟動
-        $('.prev-arrow,.next-arrow').mouseenter(function () {
+        // 上按鈕
+        $('.prev-arrow').on({
+            // 滑鼠碰到上按鈕就清除自動播放，移開就啟動
+            'mouseenter': function () {
                 clearInterval(myInterval);
-            })
-            .mouseleave(function () {
-                startInterval(myInterval)
-            })
+            },
+            'mouseleave': function () {
+                startInterval();
+            },
+            'click': function () {
+                num--;
+                // num < 0 讓它到最後一張
+                if (num < 0) {
+                    num = $('.train li').length - 1;
+                }
+                page = num;
 
-        // 下按鈕
-        $('.next-arrow').click(function () {
-            num++;
-            // 如果點擊，page的數字要改成num
-            page = num;
-            if (num > $('.train li').length - 1) {
-                num = 0
+                $('.train').css('transform', `translate(${num * -1500}px)`)
+
+                $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
             }
-
-            distance = num * -1500;
-            $('.train').css('transform', `translate(${distance}px)`)
-            $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
         })
 
-        // 上按鈕
-        $('.prev-arrow').click(function () {
-            num--;
-            // 如果點擊，page的數字要改成num
-            page = num;
-            if (num < 0) {
-                num = $('.train li').length - 1;
-            }
+        // 下按鈕
+        $('.next-arrow').on({
+            // 滑鼠碰到上按鈕就清除自動播放，移開就啟動
+            'mouseenter': function () {
+                clearInterval(myInterval);
+            },
+            'mouseleave': function () {
+                startInterval();
+            },
+            'click': function () {
+                num++;
+                // num > 圖片最大數量 讓它回到第一張
+                if (num > $('.train li').length - 1) {
+                    num = 0;
+                }
+                page = num;
 
-            distance = num * -1500;
-            $('.train').css('transform', `translate(${distance}px)`)
-            $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
+                $('.train').css('transform', `translate(${num * -1500}px)`)
+
+                $('.slider-dots li').eq(num).addClass('active').siblings().removeClass('active');
+            }
         })
 
 
