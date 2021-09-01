@@ -166,13 +166,13 @@
         $('.train').css('width', `${trainWidth}px`)
 
         // 動態生成點
-        // 迴圈所有圖
-        $('.train li').each(function () {
+        // 迴圈 (迴圈到小於train li的數量時就停止)
+        for (let i = 0; i < $('.train li').length; i++) {
             // 生成li
             let li = '<li></li>';
             // 添加到slider-dots
             $('.slider-dots').append(li);
-        });
+        }
 
         // 為第一個li添加白點
         $('.slider-dots li').eq(0).addClass('active');
