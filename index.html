@@ -25,7 +25,7 @@
             display: flex;
             /* width: 7500px; */
             padding: 0;
-            transition: .7s;
+            /* transition: .7s; */
         }
 
         li.car {
@@ -130,6 +130,9 @@
     <div class="wrap">
         <ul class="train">
             <li class="car">
+                <img src="./images/24th-main.jpg" alt="">
+            </li>
+            <li class="car">
                 <img src="./images/c06d3f11.jpg" alt="">
             </li>
             <li class="car">
@@ -143,6 +146,9 @@
             </li>
             <li class="car">
                 <img src="./images/24th-main.jpg" alt="">
+            </li>
+            <li class="car">
+                <img src="./images/c06d3f11.jpg" alt="">
             </li>
         </ul>
         <ul class="slider-dots">
@@ -172,15 +178,6 @@
         // 為第一個li添加白點
         $('.slider-dots li').eq(0).addClass('active');
 
-        // // 動態生成點
-        // // 迴圈 (迴圈到小於train li的數量時就停止)
-        // for (let i = 0; i < $('.train li').length; i++) {
-        //     // 生成li
-        //     let li = '<li></li>';
-        //     // 添加到slider-dots
-        //     $('.slider-dots').append(li);
-        // }
-
         // 控制自動播放和上下按鍵
         let page = 0;
         // 自動播放函數
@@ -194,20 +191,33 @@
         function startInterval() {
             myInterval = setInterval(function () {
                 page++
-                // 自動播放時，num的數字要改成page
-                // num = page;
+                // 自動播放
                 if (page > $('.train li').length - 1) {
                     page = 0;
                 }
 
-                distance = page * -1500;
-
-                $('.train').css('transform', `translate(${distance}px)`)
-
-                $('.slider-dots li').eq(page).addClass('active').siblings().removeClass('active');
-
+                changePage();
 
             }, 2000)
+        }
+
+        // 平時的切換方式
+        // 先調用，讓起始圖片位置在第一張
+        function changePage() {
+            distance = (page * -1500) - 1500;
+
+            $('.train').css('transition', '.5s').css('transform', `translate(${distance}px)`)
+
+            $('.slider-dots li').eq(page).addClass('active').siblings().removeClass('active');
+        }
+
+        // 圖片到達最後一張或第一張時的快速切換
+        function changePageQuietly() {
+            distance = (page * -1500) - 1500;
+
+            $('.train').css('transition', 'none').css('transform', `translate(${distance}px)`)
+
+            $('.slider-dots li').eq(page).addClass('active').siblings().removeClass('active');
         }
 
         // 載入頁面就自動播放
@@ -227,13 +237,9 @@
                 if (flag) {
                     page--;
                     // page < 0 讓它到最後一張
-                    if (page < 0) {
-                        page = $('.train li').length - 1;
-                    }
+                    if (page < -1) return;
 
-                    $('.train').css('transform', `translate(${page * -1500}px)`)
-
-                    $('.slider-dots li').eq(page).addClass('active').siblings().removeClass('active');
+                    changePage();
 
                     // 執行完後改為false
                     flag = false;
@@ -259,13 +265,9 @@
                 if (flag) {
                     page++;
                     // page > 圖片最大數量 讓它回到第一張
-                    if (page > $('.train li').length - 1) {
-                        page = 0;
-                    }
+                    if (page > 5) return;
 
-                    $('.train').css('transform', `translate(${page * -1500}px)`)
-
-                    $('.slider-dots li').eq(page).addClass('active').siblings().removeClass('active');
+                    changePage();
 
                     // 執行完後改為false
                     flag = false;
@@ -288,13 +290,28 @@
             // page數字改成index的
             page = index;
 
-            let distance = index * -1500;
-
-            $('.train').css('transform', `translate(${distance}px)`)
-            $(this).addClass('active').siblings().removeClass('active');
+            changePage()
         }, function () { // 滑鼠移開重啟自動播放
             startInterval();
         })
+
+        // 當圖片到達最後一張或第一張時，快速切換
+        $('.train').on('transitionend', function () {
+            console.log(page);
+
+            if (page >= 5) {
+                page = 0;
+                changePageQuietly()
+            }
+
+            if (page <= -1) {
+                page = 4;
+                changePageQuietly()
+            }
+        })
+
+        changePage();
+
     </script>
 
 </body>
